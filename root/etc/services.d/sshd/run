@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+_term() {
+    echo "Caught SIGTERM signal!"
+    kill -15 $(cat /var/run/sshd.pid)
+}
+
+trap _term SIGTERM
+
+s6-setuidgid root /usr/sbin/sshd -D -e \
+    -f /etc/ssh/sshd_config &
+
+wait
